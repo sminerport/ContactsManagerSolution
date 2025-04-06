@@ -1,0 +1,3 @@
+2025-04-06 03:03:46.910 -06:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-04-06 03:03:46.945 -06:00 [INF] Hosting environment: Development
+2025-04-06 03:03:46.950 -06:00 [INF] Content root path: C:\WindowsCode\ContactsManagerSolution\ContactsManager.UI
