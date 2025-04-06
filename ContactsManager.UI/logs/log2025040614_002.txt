@@ -1,0 +1,7 @@
+2025-04-06 14:38:20.786 -06:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-04-06 14:38:20.883 -06:00 [INF] Hosting environment: Development
+2025-04-06 14:38:20.968 -06:00 [INF] Content root path: C:\WindowsCode\ContactsManagerSolution\ContactsManager.UI
+2025-04-06 14:59:42.821 -06:00 [INF] User profile is available. Using 'C:\Users\Scott\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-04-06 14:59:44.012 -06:00 [INF] Now listening on: http://localhost:5009
+2025-04-06 14:59:54.717 -06:00 [INF] Request starting HTTP/1.1 GET http://localhost:5009/_framework/aspnetcore-browser-refresh.js - null null
+2025-04-06 14:59:57.589 -06:00 [INF] Request finished HTTP/1.1 GET http://localhost:5009/_framework/aspnetcore-browser-refresh.js - 200 16521 application/javascript; charset=utf-8 3182.8314ms

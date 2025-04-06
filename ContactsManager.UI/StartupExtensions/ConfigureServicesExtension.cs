@@ -6,6 +6,7 @@ using CRUDExample.Filters.PersonsListResultFilter;
 
 using Entities;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -47,6 +48,7 @@ namespace CRUDExample
             services.AddScoped<PersonsGetterService, PersonsGetterService>();
             services.AddScoped<IPersonsUpdaterService, PersonsUpdaterService>();
             services.AddScoped<IPersonsSorterService, PersonsSorterService>();
+            services.AddTransient<PersonsListResultFilter>();
             services.AddHttpLogging();
 
             if (!webHostEnvironment.IsEnvironment("Test"))
@@ -57,18 +59,32 @@ namespace CRUDExample
                 });
             }
 
-            services.AddTransient<PersonsListResultFilter>();
-
             // Enable Identity iin this project
-            services.AddIdentity<ApplicationUser, ApplicationRole>()
+            services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+            {
+                options.Password.RequiredLength = 5;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireDigit = false;
+                options.Password.RequiredUniqueChars = 3;
+            })
+            .AddDefaultTokenProviders()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, Guid>>()
+            .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid>>();
 
-                .AddDefaultTokenProviders()
+            services.AddAuthorization(options =>
+            {
+                options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build(); // enforces authorization policy (user must be authenticated) for all the action methods
+            });
 
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-
-                .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, Guid>>()
-
-                .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid>>();
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+            });
 
             return services;
         }

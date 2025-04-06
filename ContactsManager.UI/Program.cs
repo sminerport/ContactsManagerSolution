@@ -17,6 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, LoggerConfiguration loggerConfiguration) =>
 {
     loggerConfiguration
+
     .ReadFrom.Configuration(context.Configuration) // read configuration settings from built-in IConfiguration
     .ReadFrom.Services(services); // read current app's services and make them available to serilog
 });
@@ -46,15 +47,11 @@ if (builder.Environment.IsEnvironment("Test") == false)
     Rotativa.AspNetCore.RotativaConfiguration.Setup("wwwroot", "Rotativa");
 }
 
-//app.Logger.LogDebug("debug-message");
-//app.Logger.LogInformation("information-message");
-//app.Logger.LogWarning("warning-message");
-//app.Logger.LogError("error-message");
-//app.Logger.LogCritical("critical-message");
-
 app.UseStaticFiles();
-app.UseRouting();
-app.MapControllers();
+app.UseRouting(); // Identifying action method based on route
+app.UseAuthentication(); // Reading Identity cookie
+app.UseAuthorization(); // Validates access permissions of the user
+app.MapControllers(); // Execute the filter pipeline (action + filters)
 
 app.Run();
 
