@@ -9,6 +9,7 @@ using Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 using Repositories;
@@ -36,6 +37,8 @@ namespace CRUDExample
                 //options.Filters.Add<ResponseHeaderActionFilter>();
 
                 options.Filters.Add(new ResponseHeaderActionFilter(services.BuildServiceProvider().GetRequiredService<ILogger<ResponseHeaderActionFilter>>()) { Key = "X-From-Global-Filter", Value = "Custom-Global-Value", Order = 2 });
+
+                options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
             });
 
             // add services into IoC container
@@ -79,6 +82,14 @@ namespace CRUDExample
                 options.FallbackPolicy = new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
                     .Build(); // enforces authorization policy (user must be authenticated) for all the action methods
+
+                options.AddPolicy("NotAuthorized", policy =>
+                {
+                    policy.RequireAssertion(context =>
+                    {
+                        return !context.User.Identity.IsAuthenticated;
+                    });
+                });
             });
 
             services.ConfigureApplicationCookie(options =>
