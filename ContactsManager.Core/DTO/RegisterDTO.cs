@@ -29,6 +29,7 @@ namespace ContactsManager.Core.DTO
         [Compare("Password", ErrorMessage = "Password and Confirm Password do not match")]
         public string ConfirmPassword { get; set; } = string.Empty;
 
+        [Required(ErrorMessage = "The user role is required.")]
         public UserTypeOptions UserType { get; set; } = UserTypeOptions.User;
     }
 }

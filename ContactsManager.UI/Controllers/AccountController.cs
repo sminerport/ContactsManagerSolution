@@ -10,19 +10,33 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ContactsManager.UI.Controllers
 {
-    [Route("[controller]/[action]")]
+    //[Route("[controller]/[action]")]
+    //[AllowAnonymous]
     public class AccountController : Controller
     {
+        #region Fields
+
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager)
+        #endregion Fields
+
+        #region Constructors
+
+        public AccountController(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            RoleManager<ApplicationRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
         }
+
+        #endregion Constructors
+
+        #region Register
 
         [HttpGet]
         [Authorize("NotAuthorized")]
@@ -33,7 +47,6 @@ namespace ContactsManager.UI.Controllers
 
         [HttpPost]
         [Authorize("NotAuthorized")]
-        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterDTO registerDTO)
         {
             if (ModelState.IsValid == false)
@@ -102,6 +115,10 @@ namespace ContactsManager.UI.Controllers
             }
         }
 
+        #endregion Register
+
+        #region Login
+
         [HttpGet]
         [Authorize("NotAuthorized")]
         public IActionResult Login()
@@ -111,7 +128,9 @@ namespace ContactsManager.UI.Controllers
 
         [HttpPost]
         [Authorize("NotAuthorized")]
-        public async Task<IActionResult> Login(LoginDTO loginDTO, string? ReturnUrl)
+        public async Task<IActionResult> Login(
+            LoginDTO loginDTO,
+            string? ReturnUrl)
         {
             if (!ModelState.IsValid)
             {
@@ -143,13 +162,19 @@ namespace ContactsManager.UI.Controllers
 
                 if (user != null)
                 {
-                    if (await _userManager.IsInRoleAsync(user, UserTypeOptions.Admin.ToString()))
+                    if (await _userManager.IsInRoleAsync(
+                        user: user,
+                        role: UserTypeOptions.Admin.ToString()))
                     {
-                        return RedirectToAction("Index", "Home", new { area = "Admin" });
+                        return RedirectToAction(
+                            actionName: "Index",
+                            controllerName: "Home",
+                            routeValues: new { area = "Admin" });
                     }
                 }
 
-                if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
+                if (!string.IsNullOrEmpty(ReturnUrl)
+                    && Url.IsLocalUrl(ReturnUrl))
                 {
                     return LocalRedirect(ReturnUrl);
                 }
@@ -165,7 +190,11 @@ namespace ContactsManager.UI.Controllers
             return View(loginDTO);
         }
 
-        [Authorize()]
+        #endregion Login
+
+        #region Logout
+
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
@@ -174,6 +203,11 @@ namespace ContactsManager.UI.Controllers
                 controllerName: "Account");
         }
 
+        #endregion Logout
+
+        #region Remote Validation
+
+        [AllowAnonymous]
         public async Task<IActionResult> IsEmailAlreadyRegistered(string email)
         {
             ApplicationUser? user = await _userManager.FindByEmailAsync(email);
@@ -187,5 +221,7 @@ namespace ContactsManager.UI.Controllers
                 return Json(false); // invalid email address (already exists)
             }
         }
+
+        #endregion Remote Validation
     }
 }
