@@ -1,0 +1,11 @@
+# Ignore build artifacts
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vscode/
+# Logs
+ContactsManager.UI/logs/*
+!ContactsManager.UI/logs/.gitkeep
